@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KYZEN — Built Different</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f5f0;
+    --grey: #1a1a1a;
+    --mid: #3a3a3a;
+    --light: #888;
+    --accent: #f5f5f0;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--white);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 32px; height: 32px;
+    border: 1px solid rgba(245,245,240,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s cubic-bezier(.25,.46,.45,.94), width 0.2s, height 0.2s, opacity 0.2s;
+    transform: translate(-50%, -50%);
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 48px;
+    mix-blend-mode: difference;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.2em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+
+  /* HERO */
+  .hero {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 0 24px;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: 'KYZEN';
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(180px, 30vw, 400px);
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(245,245,240,0.04);
+    letter-spacing: -0.02em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: 32px;
+    animation: fadeUp 1s ease 0.2s both;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(80px, 16vw, 200px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    animation: fadeUp 1s ease 0.4s both;
+  }
+
+  .hero-tagline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 5vw, 60px);
+    letter-spacing: 0.15em;
+    color: var(--light);
+    margin-top: 16px;
+    animation: fadeUp 1s ease 0.55s both;
+  }
+
+  .hero-desc {
+    margin-top: 32px;
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: var(--light);
+    max-width: 400px;
+    line-height: 1.7;
+    animation: fadeUp 1s ease 0.7s both;
+  }
+
+  .hero-cta {
+    margin-top: 52px;
+    animation: fadeUp 1s ease 0.85s both;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 18px 52px;
+    border: 1px solid var(--white);
+    color: var(--black);
+    background: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s, transform 0.2s;
+  }
+  .btn-primary:hover {
+    background: transparent;
+    color: var(--white);
+    transform: translateY(-2px);
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.3;
+    animation: fadeUp 1s ease 1.2s both;
+  }
+  .scroll-indicator span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: var(--white);
+    animation: scrollPulse 1.8s ease infinite;
+  }
+
+  /* SECTION BASE */
+  section { padding: 120px 48px; }
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: 64px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--grey);
+    max-width: 80px;
+  }
+
+  /* PRODUCT GRID */
+  .products-section {
+    background: var(--black);
+    border-top: 1px solid var(--grey);
+  }
+
+  .products-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 48px;
+  }
+
+  .product-card {
+    background: var(--grey);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .product-card:hover .product-card-img { transform: scale(1.03); }
+
+  .product-card-img-wrap {
+    aspect-ratio: 3/4;
+    background: #1e1e1e;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .product-card-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .product-card-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 41px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.015) 40px, rgba(255,255,255,0.015) 41px);
+  }
+
+  .product-card-placeholder svg {
+    width: 28px; height: 28px;
+    stroke: rgba(245,245,240,0.2);
+    fill: none;
+    stroke-width: 1;
+  }
+
+  .product-card-placeholder span {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,245,240,0.15);
+  }
+
+  .product-card-badge {
+    position: absolute;
+    top: 16px; left: 16px;
+    background: var(--white);
+    color: var(--black);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 0.15em;
+    padding: 6px 10px;
+    text-transform: uppercase;
+  }
+
+  .product-card-badge.coming {
+    background: transparent;
+    border: 1px solid rgba(245,245,240,0.2);
+    color: var(--light);
+  }
+
+  .product-card-info {
+    padding: 24px 28px 32px;
+    border-top: 1px solid #222;
+  }
+
+  .product-card-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .product-card-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: var(--light);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .product-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .product-card-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.05em;
+  }
+
+  .product-card-price.muted {
+    color: var(--mid);
+    font-size: 18px;
+  }
+
+  .product-card-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(245,245,240,0.3);
+    padding-bottom: 3px;
+    transition: border-color 0.2s, opacity 0.2s;
+  }
+  .product-card-btn:hover { border-color: var(--white); }
+  .product-card-btn.disabled { color: var(--light); pointer-events: none; border-color: transparent; }
+
+  /* FEATURED PRODUCT */
+  .product-card.featured {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .product-card.featured .product-card-img-wrap { aspect-ratio: auto; min-height: 480px; }
+  .product-card.featured .product-card-info {
+    padding: 48px 40px;
+    border-top: none;
+    border-left: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .product-card.featured .product-card-name { font-size: 36px; margin-bottom: 10px; }
+  .product-card.featured .product-highlights {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 28px 0 36px;
+  }
+  .product-card.featured .product-highlights li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.8rem;
+    color: rgba(245,245,240,0.7);
+    padding-bottom: 14px;
+    border-bottom: 1px solid #222;
+  }
+  .product-card.featured .product-card-price { font-size: 40px; margin-bottom: 28px; }
+
+  @media (max-width: 900px) {
+    .products-grid { grid-template-columns: 1fr 1fr; }
+    .product-card.featured { grid-column: span 2; grid-template-columns: 1fr; }
+    .product-card.featured .product-card-img-wrap { min-height: 320px; }
+    .product-card.featured .product-card-info { border-left: none; border-top: 1px solid #222; }
+  }
+
+  @media (max-width: 600px) {
+    .products-grid { grid-template-columns: 1fr; }
+    .product-card.featured { grid-column: span 1; }
+  }
+  .highlight-dot {
+    width: 4px; height: 4px;
+    background: var(--white);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* FEATURES */
+  .features-section {
+    background: var(--grey);
+    border-top: 1px solid #222;
+  }
+
+  .features-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .features-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 100px);
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    margin-bottom: 80px;
+    max-width: 600px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .feature-card {
+    background: var(--black);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 2px;
+    height: 0;
+    background: var(--white);
+    transition: height 0.4s ease;
+  }
+
+  .feature-card:hover::before { height: 100%; }
+  .feature-card:hover { background: #111; }
+
+  .feature-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--mid);
+    margin-bottom: 32px;
+  }
+
+  .feature-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+
+  .feature-desc {
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: var(--light);
+    font-weight: 300;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--white);
+    color: var(--black);
+    text-align: center;
+    padding: 140px 48px;
+  }
+
+  .cta-section .section-label {
+    color: rgba(10,10,10,0.4);
+    justify-content: center;
+  }
+  .cta-section .section-label::after { display: none; }
+
+  .cta-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 12vw, 160px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--black);
+    margin-bottom: 48px;
+  }
+
+  .cta-sub {
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    color: rgba(10,10,10,0.5);
+    margin-bottom: 52px;
+  }
+
+  .btn-dark {
+    display: inline-block;
+    padding: 20px 64px;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .btn-dark:hover { transform: translateY(-3px); opacity: 0.85; }
+
+  /* FOOTER */
+  footer {
+    background: var(--black);
+    border-top: 1px solid var(--grey);
+    padding: 60px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.2em;
+  }
+
+  .footer-tagline {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--light);
+  }
+
+  .footer-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    color: var(--mid);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); transform-origin: top; }
+    50%       { opacity: 0.3; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .product-inner { grid-template-columns: 1fr; gap: 48px; }
+    .features-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .section-label::after { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">KYZEN</a>
+  <ul class="nav-links">
+    <li><a href="#product">Product</a></li>
+    <li><a href="#features">Philosophy</a></li>
+    <li><a href="#order">Order</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1 class="hero-title">KYZEN</h1>
+  <p class="hero-tagline">Built Different</p>
+  <p class="hero-desc">Minimal fitness wear for those who don't make excuses.</p>
+  <div class="hero-cta">
+    <a href="https://wa.me/919553686041" class="btn-primary" target="_blank">Shop the Drop</a>
+  </div>
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products-section" id="product">
+  <div class="products-inner">
+    <div class="section-label reveal">The Collection</div>
+
+    <div class="products-grid">
+
+      <!-- ============================== -->
+      <!-- FEATURED PRODUCT (spans 2 cols) -->
+      <!-- To add your image: replace the placeholder div below with:
+           <img src="your-image.jpg" alt="Product Name" class="product-card-img"> -->
+      <!-- ============================== -->
+      <div class="product-card featured reveal">
+        <div class="product-card-img-wrap">
+          <div class="product-card-placeholder">
+            <svg viewBox="0 0 24 24"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>
+            <span>Add Product Image Here</span>
+          </div>
+          <div class="product-card-badge">Featured Drop</div>
+        </div>
+        <div class="product-card-info">
+          <!-- EDIT: Change product name below -->
+          <div class="product-card-name">KYZEN No Excuses Tee</div>
+          <!-- EDIT: Change color/variant below -->
+          <div class="product-card-sub">Unisex — Black / White</div>
+          <!-- EDIT: Change price below -->
+          <div class="product-card-price">₹1,499</div>
+          <ul class="product-highlights">
+            <!-- EDIT: Update or add highlight points below -->
+            <li><span class="highlight-dot"></span>Premium Quality — Heavyweight 240GSM cotton</li>
+            <li><span class="highlight-dot"></span>Gym Ready Fit — Structured, motion-built cut</li>
+            <li><span class="highlight-dot"></span>Minimal Design — No noise. Just intent.</li>
+            <li><span class="highlight-dot"></span>Limited Drop — Once it's gone, it's gone.</li>
+          </ul>
+          <!-- EDIT: WhatsApp number is already set to yours -->
+          <a href="https://wa.me/919553686041" class="btn-primary" target="_blank">Order Now via WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- ============================== -->
+      <!-- PRODUCT 2 -->
+      <!-- EDIT: Replace name, price, color. Add your image by replacing the placeholder div. -->
+      <!-- ============================== -->
+      <div class="product-card reveal">
+        <div class="product-card-img-wrap">
+          <div class="product-card-placeholder">
+            <svg viewBox="0 0 24 24"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>
+            <span>Add Product Image Here</span>
+          </div>
+          <!-- EDIT: Change badge text — e.g. "New", "Sold Out", "Limited" -->
+          <div class="product-card-badge">Coming Soon</div>
+        </div>
+        <div class="product-card-info">
+          <!-- EDIT: Change name, variant, price -->
+          <div class="product-card-name">KYZEN Oversized Tee</div>
+          <div class="product-card-sub">Unisex — Washed Black</div>
+          <div class="product-card-bottom">
+            <div class="product-card-price muted">₹1,799</div>
+            <a href="https://wa.me/919553686041" class="product-card-btn disabled">Notify Me</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================== -->
+      <!-- PRODUCT 3 -->
+      <!-- EDIT: Replace name, price, color. Add your image by replacing the placeholder div. -->
+      <!-- ============================== -->
+      <div class="product-card reveal">
+        <div class="product-card-img-wrap">
+          <div class="product-card-placeholder">
+            <svg viewBox="0 0 24 24"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>
+            <span>Add Product Image Here</span>
+          </div>
+          <div class="product-card-badge coming">Coming Soon</div>
+        </div>
+        <div class="product-card-info">
+          <!-- EDIT: Change name, variant, price -->
+          <div class="product-card-name">KYZEN Shorts</div>
+          <div class="product-card-sub">Unisex — Jet Black</div>
+          <div class="product-card-bottom">
+            <div class="product-card-price muted">₹999</div>
+            <a href="https://wa.me/919553686041" class="product-card-btn disabled">Notify Me</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================== -->
+      <!-- ADD MORE PRODUCTS HERE -->
+      <!-- Copy the block below and paste it. Edit name, price, badge. -->
+      <!--
+      <div class="product-card reveal">
+        <div class="product-card-img-wrap">
+          <img src="your-image.jpg" alt="Product Name" class="product-card-img">
+          <div class="product-card-badge">New</div>
+        </div>
+        <div class="product-card-info">
+          <div class="product-card-name">Product Name</div>
+          <div class="product-card-sub">Unisex — Color</div>
+          <div class="product-card-bottom">
+            <div class="product-card-price">₹X,XXX</div>
+            <a href="https://wa.me/919553686041" class="product-card-btn">Order Now</a>
+          </div>
+        </div>
+      </div>
+      -->
+      <!-- ============================== -->
+
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="features-inner">
+    <div class="section-label reveal">Our Philosophy</div>
+    <h2 class="features-headline reveal">Train Hard.<br>Look Sharp.<br>No Noise.</h2>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <p class="feature-number">01</p>
+        <h3 class="feature-title">Discipline</h3>
+        <p class="feature-desc">The gym isn't for everyone. It's for those who show up when it's hard, when they're tired, when no one's watching. That's who we build for.</p>
+      </div>
+      <div class="feature-card reveal">
+        <p class="feature-number">02</p>
+        <h3 class="feature-title">Performance</h3>
+        <p class="feature-desc">Every piece is engineered for movement. Built to handle the weight — literally. No compromise on comfort, range, or durability.</p>
+      </div>
+      <div class="feature-card reveal">
+        <p class="feature-number">03</p>
+        <h3 class="feature-title">Mindset</h3>
+        <p class="feature-desc">What you wear sets the tone. KYZEN is a reminder — every session, every rep — that you chose this. No excuses. Only results.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="order">
+  <p class="section-label">Ready?</p>
+  <h2 class="cta-headline reveal">No<br>Excuses.</h2>
+  <p class="cta-sub reveal">Limited stock. DM us on WhatsApp to order now.</p>
+  <a href="https://wa.me/919553686041" class="btn-dark reveal" target="_blank">Order Now</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">KYZEN</div>
+  <div class="footer-tagline">No excuses. Only results.</div>
+  <div class="footer-copy">© 2025 KYZEN. All rights reserved.</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top  = my + 'px';
+  });
+
+  (function animRing() {
+    rx += (mx - rx) * 0.1;
+    ry += (my - ry) * 0.1;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animRing);
+  })();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+      ring.style.width = '56px'; ring.style.height = '56px';
+      ring.style.opacity = '0.2';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.width = '32px'; ring.style.height = '32px';
+      ring.style.opacity = '1';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
